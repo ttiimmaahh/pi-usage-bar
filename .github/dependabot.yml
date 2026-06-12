@@ -1,0 +1,33 @@
+version: 2
+updates:
+  # npm dependencies: typebox runtime dependency and pinned @earendil-works/*
+  # pi packages (peer deps are "*", so concrete versions live in devDependencies).
+  # Grouped so related bumps arrive as one PR instead of many.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      pi:
+        patterns:
+          - "@earendil-works/*"
+      runtime:
+        patterns:
+          - "typebox"
+      testing:
+        patterns:
+          - "tsx"
+          - "typescript"
+          - "@types/node"
+
+  # Keep workflow actions (checkout, setup-node, ...) current so they don't drift
+  # onto deprecated runtimes.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci(deps)"
