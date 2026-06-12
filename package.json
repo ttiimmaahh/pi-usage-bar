@@ -1,6 +1,6 @@
 {
   "name": "pi-usage-bar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pi footer/statusline and local usage ledger for per-session and per-project token attribution.",
   "license": "MIT",
   "author": "Tim Pearson (https://github.com/ttiimmaahh)",
