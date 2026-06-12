@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-12
+
+### Changed
+
+- Validate npm Trusted Publishing release automation for the public package.
+
 ## [0.1.0] - 2026-06-12
 
 ### Added
@@ -20,5 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Privacy controls for newly logged rows, JSON export, SQLite backup, and diagnostics via `/usage doctor`.
 - TypeScript typecheck and Node test suite.
 
-[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ttiimmaahh/pi-usage-bar/releases/tag/v0.1.0
