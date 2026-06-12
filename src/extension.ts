@@ -9,7 +9,12 @@ import {
 	splitProjectAndRange,
 	isSegmentName,
 } from "./commands.ts";
-import { CONFIG_PATH, loadConfig, normalizeProjectKey, saveConfig } from "./config.ts";
+import {
+	CONFIG_PATH,
+	loadConfig,
+	normalizeProjectKey,
+	saveConfig,
+} from "./config.ts";
 import {
 	formatModelName,
 	formatMoney,
@@ -587,7 +592,10 @@ export default function (pi: ExtensionAPI): void {
 					return;
 				}
 				case "display": {
-					if (rest[0] === "project" && (rest[1] === "short" || rest[1] === "full")) {
+					if (
+						rest[0] === "project" &&
+						(rest[1] === "short" || rest[1] === "full")
+					) {
 						state.config.display.projectLabel = rest[1];
 						saveConfig(state.config);
 						state.requestRender?.();
@@ -599,9 +607,7 @@ export default function (pi: ExtensionAPI): void {
 				}
 				case "segments": {
 					const action = rest[0];
-					const requested = rest
-						.slice(1)
-						.filter(isSegmentName);
+					const requested = rest.slice(1).filter(isSegmentName);
 					if (action === "list" || !action) {
 						ctx.ui.notify(
 							`Visible usage footer segments: ${describeSegments(state.config)}`,

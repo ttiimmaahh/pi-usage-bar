@@ -119,7 +119,8 @@ function normalizeConfig(raw: Partial<UsageBarConfig>): UsageBarConfig {
 		projectAliases: aliases,
 		display: {
 			projectLabel:
-				displayRaw.projectLabel === "short" || displayRaw.projectLabel === "full"
+				displayRaw.projectLabel === "short" ||
+				displayRaw.projectLabel === "full"
 					? displayRaw.projectLabel
 					: DEFAULT_CONFIG.display.projectLabel,
 		},

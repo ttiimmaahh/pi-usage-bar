@@ -7,7 +7,9 @@ export type AttributionCommand = {
 	persistAlias: boolean;
 };
 
-export function parseAttributionCommand(args: string): AttributionCommand | undefined {
+export function parseAttributionCommand(
+	args: string,
+): AttributionCommand | undefined {
 	const trimmed = args.trim();
 	const alias = trimmed.match(/^(?:change|alias)\s+(.+?)\s+(?:to|=>)\s+(.+)$/i);
 	if (alias) {
@@ -37,8 +39,10 @@ export function rangeFromSubcommand(
 	if (["today", "yesterday", "week", "month"].includes(subcommand)) {
 		return { label: subcommand, words: [subcommand] };
 	}
-	if (subcommand === "since") return { label: "since", words: ["since", ...rest] };
-	if (subcommand === "between") return { label: "between", words: ["between", ...rest] };
+	if (subcommand === "since")
+		return { label: "since", words: ["since", ...rest] };
+	if (subcommand === "between")
+		return { label: "between", words: ["between", ...rest] };
 	return { label: "all", words: rest };
 }
 
@@ -65,5 +69,12 @@ export function splitProjectAndRange(
 }
 
 export function isSegmentName(value: string): value is SegmentName {
-	return ["model", "context", "session", "cost", "project", "extensions"].includes(value);
+	return [
+		"model",
+		"context",
+		"session",
+		"cost",
+		"project",
+		"extensions",
+	].includes(value);
 }
