@@ -4,11 +4,19 @@ import { normalizeProjectKey, resolveAlias } from "../src/config.ts";
 import type { UsageBarConfig } from "../src/types.ts";
 
 const config: UsageBarConfig = {
-	segments: ["model", "context", "session", "cost", "project", "extensions"],
+	segments: [
+		"model",
+		"context",
+		"session",
+		"cost",
+		"project",
+		"extensions",
+		"thinking",
+	],
 	warningThreshold: 70,
 	errorThreshold: 90,
 	showSecondLine: true,
-	display: { projectLabel: "full" },
+	display: { projectLabel: "full", hideThinking: false },
 	projectAliases: {
 		"personal/_root": "personal/pi-usage-bar",
 		"old name": "normalized-target",

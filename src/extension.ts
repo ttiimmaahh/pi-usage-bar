@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ExtensionAPI, ThemeColor } from "@earendil-works/pi-coding-agent";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
-import { truncateToWidth } from "@earendil-works/pi-tui";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import {
 	parseAttributionCommand,
 	rangeFromSubcommand,
@@ -25,7 +25,7 @@ import {
 } from "./format.ts";
 import { UsageLedger } from "./ledger.ts";
 import { pricingFromModel } from "./pricing.ts";
-import { resolveProjectInfo } from "./project.ts";
+import { displayProjectLabel, resolveProjectInfo } from "./project.ts";
 import { parseUsageRange } from "./ranges.ts";
 import {
 	doctorReport,
@@ -92,9 +92,14 @@ function describeSegments(config: UsageBarConfig): string {
 	return config.segments.join(", ");
 }
 
-function displayProjectKey(projectKey: string, config: UsageBarConfig): string {
-	if (config.display.projectLabel === "full") return projectKey;
-	return projectKey.split("/").filter(Boolean).pop() ?? projectKey;
+function alignRight(left: string, right: string, width: number): string {
+	const rightWidth = visibleWidth(right);
+	if (rightWidth >= width) return truncateToWidth(right, width);
+	const availableLeftWidth = width - rightWidth - 1;
+	if (availableLeftWidth <= 0) return truncateToWidth(right, width);
+	const leftText = truncateToWidth(left, availableLeftWidth);
+	const gap = Math.max(1, width - visibleWidth(leftText) - rightWidth);
+	return `${leftText}${" ".repeat(gap)}${right}`;
 }
 
 export default function (pi: ExtensionAPI): void {
@@ -186,6 +191,10 @@ export default function (pi: ExtensionAPI): void {
 					const extensionStatuses = visibleExtensionStatuses(
 						footerData.getExtensionStatuses?.() ?? new Map(),
 					);
+					const thinkingSegment = `${theme.fg("text", "thinking:")} ${theme.fg(
+						"muted",
+						pi.getThinkingLevel(),
+					)}`;
 					const segments: Record<SegmentName, string | null> = {
 						model: theme.fg("accent", formatModelName(ctx.model?.id)),
 						context: theme.fg(contextColor(percent, state.config), contextText),
@@ -201,17 +210,21 @@ export default function (pi: ExtensionAPI): void {
 							isAmbiguousRootProject(state.project.projectKey)
 								? "warning"
 								: "muted",
-							displayProjectKey(state.project.projectKey, state.config),
+							displayProjectLabel(state.project, state.config),
 						),
 						extensions: extensionStatuses
 							? theme.fg("text", extensionStatuses)
 							: null,
+						thinking: thinkingSegment,
 					};
 					const separator = ` ${theme.fg("dim", SEGMENT_SEPARATOR)} `;
-					const lineOne = state.config.segments
+					const leftSegments = state.config.segments
+						.filter((segment) => segment !== "thinking")
 						.map((segment) => segments[segment])
-						.filter((segment): segment is string => Boolean(segment))
-						.join(separator);
+						.filter((segment): segment is string => Boolean(segment));
+					const lineOne = state.config.segments.includes("thinking")
+						? alignRight(leftSegments.join(separator), thinkingSegment, width)
+						: leftSegments.join(separator);
 					if (!state.config.showSecondLine)
 						return [truncateToWidth(lineOne, width)];
 					const branch = state.project.gitBranch
@@ -228,6 +241,10 @@ export default function (pi: ExtensionAPI): void {
 				},
 			};
 		});
+	});
+
+	pi.on("thinking_level_select", () => {
+		state.requestRender?.();
 	});
 
 	pi.on("message_end", (event, ctx) => {
@@ -615,17 +632,22 @@ export default function (pi: ExtensionAPI): void {
 						);
 						return;
 					}
-					if (action === "only" && requested.length > 0)
+					if (action === "only" && requested.length > 0) {
 						state.config.segments = requested;
-					else if (action === "hide")
+						state.config.display.hideThinking = !requested.includes("thinking");
+					} else if (action === "hide") {
 						state.config.segments = state.config.segments.filter(
 							(s) => !requested.includes(s),
 						);
-					else if (action === "show")
+						if (requested.includes("thinking"))
+							state.config.display.hideThinking = true;
+					} else if (action === "show") {
 						state.config.segments = [
 							...new Set([...state.config.segments, ...requested]),
 						];
-					else if (action === "second-line")
+						if (requested.includes("thinking"))
+							state.config.display.hideThinking = false;
+					} else if (action === "second-line")
 						state.config.showSecondLine = rest[1] !== "off";
 					else {
 						ctx.ui.notify(
@@ -665,7 +687,7 @@ export default function (pi: ExtensionAPI): void {
 							"/usage attribute — interactive attribution picker\n" +
 							"/usage doctor — storage/config diagnostic\n" +
 							"/usage display project short|full — project label display\n" +
-							"/usage segments list|only|show|hide <segments> — customize footer\n" +
+							"/usage segments list|only|show|hide <segments> — customize footer (including thinking)\n" +
 							"/usage backup — copy the SQLite ledger to backups/\n" +
 							"/usage export [limit] — export recent rows to JSON\n" +
 							"/usage memory-summary [range] — compact rollup text\n" +

@@ -52,7 +52,8 @@ export type SegmentName =
 	| "session"
 	| "cost"
 	| "project"
-	| "extensions";
+	| "extensions"
+	| "thinking";
 
 export interface UsagePrivacyConfig {
 	storeCwd: boolean;
@@ -64,6 +65,7 @@ export interface UsagePrivacyConfig {
 
 export interface UsageDisplayConfig {
 	projectLabel: "full" | "short";
+	hideThinking: boolean;
 }
 
 export interface UsageBarConfig {

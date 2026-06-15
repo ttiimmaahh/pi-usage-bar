@@ -47,7 +47,7 @@ const config: UsageBarConfig = {
 	warningThreshold: 70,
 	errorThreshold: 90,
 	showSecondLine: true,
-	display: { projectLabel: "full" },
+	display: { projectLabel: "full", hideThinking: false },
 	projectAliases: {},
 	privacy: {
 		storeCwd: false,

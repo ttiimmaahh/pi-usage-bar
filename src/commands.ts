@@ -76,5 +76,6 @@ export function isSegmentName(value: string): value is SegmentName {
 		"cost",
 		"project",
 		"extensions",
+		"thinking",
 	].includes(value);
 }

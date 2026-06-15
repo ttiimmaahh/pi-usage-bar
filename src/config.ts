@@ -14,16 +14,26 @@ const ALL_SEGMENTS: readonly SegmentName[] = [
 	"cost",
 	"project",
 	"extensions",
+	"thinking",
 ];
 
 export const DEFAULT_CONFIG: UsageBarConfig = {
-	segments: ["model", "context", "session", "cost", "project", "extensions"],
+	segments: [
+		"model",
+		"context",
+		"session",
+		"cost",
+		"project",
+		"extensions",
+		"thinking",
+	],
 	warningThreshold: 70,
 	errorThreshold: 90,
 	showSecondLine: true,
 	projectAliases: {},
 	display: {
 		projectLabel: "full",
+		hideThinking: false,
 	},
 	privacy: {
 		storeCwd: true,
@@ -89,6 +99,13 @@ function normalizeConfig(raw: Partial<UsageBarConfig>): UsageBarConfig {
 					typeof segment === "string" && isSegmentName(segment),
 			)
 		: DEFAULT_CONFIG.segments;
+	const displayRaw: Partial<UsageBarConfig["display"]> =
+		raw.display && typeof raw.display === "object" ? raw.display : {};
+	const hideThinking =
+		typeof displayRaw.hideThinking === "boolean"
+			? displayRaw.hideThinking
+			: DEFAULT_CONFIG.display.hideThinking;
+	const normalizedSegments = normalizeSegments(segments, hideThinking);
 	const warningThreshold = validPercent(raw.warningThreshold)
 		? raw.warningThreshold
 		: DEFAULT_CONFIG.warningThreshold;
@@ -106,13 +123,10 @@ function normalizeConfig(raw: Partial<UsageBarConfig>): UsageBarConfig {
 				aliases[normalizedFrom] = normalizedTo;
 		}
 	}
-	const displayRaw: Partial<UsageBarConfig["display"]> =
-		raw.display && typeof raw.display === "object" ? raw.display : {};
 	const privacyRaw: Partial<UsageBarConfig["privacy"]> =
 		raw.privacy && typeof raw.privacy === "object" ? raw.privacy : {};
 	return {
-		segments:
-			segments.length > 0 ? [...new Set(segments)] : DEFAULT_CONFIG.segments,
+		segments: normalizedSegments,
 		warningThreshold,
 		errorThreshold,
 		showSecondLine: raw.showSecondLine ?? DEFAULT_CONFIG.showSecondLine,
@@ -123,6 +137,7 @@ function normalizeConfig(raw: Partial<UsageBarConfig>): UsageBarConfig {
 				displayRaw.projectLabel === "full"
 					? displayRaw.projectLabel
 					: DEFAULT_CONFIG.display.projectLabel,
+			hideThinking,
 		},
 		privacy: {
 			storeCwd: privacyRaw.storeCwd ?? DEFAULT_CONFIG.privacy.storeCwd,
@@ -145,4 +160,17 @@ function validPercent(value: unknown): value is number {
 		value >= 0 &&
 		value <= 100
 	);
+}
+
+function normalizeSegments(
+	segments: SegmentName[],
+	hideThinking: boolean,
+): SegmentName[] {
+	const normalized =
+		segments.length > 0 ? [...new Set(segments)] : DEFAULT_CONFIG.segments;
+	if (hideThinking)
+		return normalized.filter((segment) => segment !== "thinking");
+	return normalized.includes("thinking")
+		? normalized
+		: [...normalized, "thinking"];
 }

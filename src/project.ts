@@ -46,12 +46,12 @@ export function resolveProjectInfo(
 	const gitRoot = git(["rev-parse", "--show-toplevel"], cwd);
 	const gitBranch = git(["branch", "--show-current"], cwd);
 	const gitRemote = git(["config", "--get", "remote.origin.url"], cwd);
-	const rootOrCwd = gitRoot ?? cwd;
-	const rawProjectKey =
-		projectFromRemote(gitRemote) ??
-		projectFromGitroot(rootOrCwd) ??
-		basename(rootOrCwd) ??
-		"unknown";
+	const rawProjectKey = gitRoot
+		? (projectFromRemote(gitRemote) ??
+			projectFromGitroot(gitRoot) ??
+			basename(gitRoot) ??
+			"unknown")
+		: (basename(cwd) ?? "unknown");
 	const projectKey = config
 		? resolveAlias(rawProjectKey, config)
 		: rawProjectKey;
@@ -63,6 +63,23 @@ export function resolveProjectInfo(
 		gitRemote,
 		projectKey,
 	};
+}
+
+export function displayProjectKey(
+	projectKey: string,
+	config: UsageBarConfig,
+): string {
+	if (config.display.projectLabel === "full") return projectKey;
+	return projectKey.split("/").filter(Boolean).pop() ?? projectKey;
+}
+
+export function displayProjectLabel(
+	project: ProjectInfo,
+	config: UsageBarConfig,
+): string {
+	const label = displayProjectKey(project.projectKey, config);
+	if (!project.gitRoot || !project.gitBranch) return label;
+	return `${label}:${project.gitBranch}`;
 }
 
 export function compactPath(path: string, cwd: string): string {

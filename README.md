@@ -64,19 +64,20 @@ pi install git:github.com/ttiimmaahh/pi-usage-bar@main
 The footer renders one or two lines depending on config:
 
 ```text
-<model> │ <context bar + percent/window> │ sess <tokens> │ <cost> │ <project> │ <extension statuses>
+<model> │ <context bar + percent/window> │ sess <tokens> │ <cost> │ <project-or-repo:branch> │ <extension statuses>        thinking: <level>
 ▶ in <tokens> · out <tokens> · cache <tokens> · project today <tokens> · <branch>
 ```
 
-Ambiguous gitroot parent directories, such as `/Developer/gitroot/personal`, are displayed as `<scope>/_root` and highlighted in warning color. Pi also shows a one-time notification explaining whether to use a one-time `move` or persistent `alias`.
+When Pi runs outside any git repository, the project segment falls back to the current folder name. When Pi runs inside a git repository, the project segment shows `<repo>:<branch>` (for example, `example/app:main`). Ambiguous gitroot parent directories, such as `/Developer/gitroot/personal`, are displayed as `<scope>/_root` and highlighted in warning color. Pi also shows a one-time notification explaining whether to use a one-time `move` or persistent `alias`.
 
 Customize footer segments:
 
 ```text
 /usage segments list
-/usage segments only model context session cost project
+/usage segments only model context session cost project thinking
 /usage segments hide extensions
 /usage segments show extensions
+/usage segments hide thinking
 /usage segments second-line off
 /usage segments second-line on
 ```
@@ -84,8 +85,10 @@ Customize footer segments:
 Available segments:
 
 ```text
-model context session cost project extensions
+model context session cost project extensions thinking
 ```
+
+The `thinking` segment shows the current Shift+Tab thinking/effort level and is right-aligned when visible.
 
 ## Usage ledger
 
@@ -243,12 +246,16 @@ Example config:
 
 ```json
 {
-  "segments": ["model", "context", "session", "cost", "project", "extensions"],
+  "segments": ["model", "context", "session", "cost", "project", "extensions", "thinking"],
   "warningThreshold": 70,
   "errorThreshold": 90,
   "showSecondLine": true,
   "projectAliases": {
     "personal/_root": "personal/pi-usage-bar"
+  },
+  "display": {
+    "projectLabel": "full",
+    "hideThinking": false
   },
   "privacy": {
     "storeCwd": true,
@@ -262,7 +269,7 @@ Example config:
 
 Privacy fields affect newly logged events only; they do not rewrite historical rows.
 
-Display settings control footer presentation only. `display.projectLabel: "short"` shows the last path segment in the footer while keeping full project keys in the ledger and reports.
+Display settings control footer presentation only. `display.projectLabel: "short"` shows the last path segment in the footer while keeping full project keys in the ledger and reports. The `thinking` segment shows the current thinking/effort level and is right-aligned by default, including for existing configs. Use `/usage segments hide thinking` to persist `display.hideThinking: true`.
 
 ## Pricing note
 

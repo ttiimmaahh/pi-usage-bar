@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-15
+
+### Added
+
+- Show the current Pi thinking/effort level in the footer as a right-aligned `thinking: <level>` segment that updates when Shift+Tab changes the level.
+- Add the configurable `thinking` footer segment and `display.hideThinking` opt-out, with existing configs showing thinking by default unless explicitly hidden.
+
+### Changed
+
+- Render the `thinking:` label brighter than the thinking level value for better footer readability.
+- Show git-backed project labels as `<project>:<branch>` in the footer while keeping non-git folders as the folder name.
+
 ## [0.1.1] - 2026-06-12
 
 ### Changed
@@ -26,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Privacy controls for newly logged rows, JSON export, SQLite backup, and diagnostics via `/usage doctor`.
 - TypeScript typecheck and Node test suite.
 
-[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ttiimmaahh/pi-usage-bar/releases/tag/v0.1.0
