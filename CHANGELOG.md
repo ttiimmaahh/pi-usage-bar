@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-22
+
+### Fixed
+
+- Normalize Azure DevOps SSH and HTTPS git remotes before rendering project
+  labels so the footer shows clean `<org>/<repo>:<branch>` labels instead of
+  raw `git@ssh.dev.azure.com:v3/...` URLs.
+
 ## [0.2.0] - 2026-06-15
 
 ### Added
@@ -38,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Privacy controls for newly logged rows, JSON export, SQLite backup, and diagnostics via `/usage doctor`.
 - TypeScript typecheck and Node test suite.
 
-[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ttiimmaahh/pi-usage-bar/releases/tag/v0.1.0

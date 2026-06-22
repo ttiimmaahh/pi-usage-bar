@@ -41,6 +41,52 @@ test("displayProjectLabel shows repo:branch for git repositories", () => {
 	);
 });
 
+test("resolveProjectInfo normalizes Azure DevOps SSH remotes", () => {
+	const cwd = mkdtempSync(join(tmpdir(), "pi-usage-bar-azure-ssh-"));
+	run("git", ["init", "-b", "upgrade/2211JDK21"], cwd);
+	run(
+		"git",
+		[
+			"remote",
+			"add",
+			"origin",
+			"git@ssh.dev.azure.com:v3/interstate-batteries/SAP%20Commerce%20Cloud/SAP%20Commerce%20Cloud",
+		],
+		cwd,
+	);
+
+	const project = resolveProjectInfo(cwd, DEFAULT_CONFIG);
+
+	assert.equal(project.projectKey, "interstate-batteries/SAP Commerce Cloud");
+	assert.equal(
+		displayProjectLabel(project, DEFAULT_CONFIG),
+		"interstate-batteries/SAP Commerce Cloud:upgrade/2211JDK21",
+	);
+});
+
+test("resolveProjectInfo normalizes Azure DevOps HTTPS remotes", () => {
+	const cwd = mkdtempSync(join(tmpdir(), "pi-usage-bar-azure-https-"));
+	run("git", ["init", "-b", "main"], cwd);
+	run(
+		"git",
+		[
+			"remote",
+			"add",
+			"origin",
+			"https://user@dev.azure.com/interstate-batteries/SAP%20Commerce%20Cloud/_git/storefront.git",
+		],
+		cwd,
+	);
+
+	const project = resolveProjectInfo(cwd, DEFAULT_CONFIG);
+
+	assert.equal(project.projectKey, "interstate-batteries/storefront");
+	assert.equal(
+		displayProjectLabel(project, DEFAULT_CONFIG),
+		"interstate-batteries/storefront:main",
+	);
+});
+
 test("displayProjectLabel respects short project labels", () => {
 	const project: ProjectInfo = {
 		cwd: "/workspace/demo",

@@ -19,14 +19,41 @@ function git(args: string[], cwd: string): string | undefined {
 	}
 }
 
+function stripGitSuffix(value: string): string {
+	return value.endsWith(".git") ? value.slice(0, -4) : value;
+}
+
+function cleanRemotePart(value: string): string {
+	const stripped = stripGitSuffix(value);
+	try {
+		return decodeURIComponent(stripped);
+	} catch {
+		return stripped;
+	}
+}
+
 function projectFromRemote(remote: string | undefined): string | undefined {
 	if (!remote) return undefined;
-	const cleaned = remote
-		.replace(/^git@github\.com:/, "")
-		.replace(/^https:\/\/github\.com\//, "")
-		.replace(/\.git$/, "")
-		.trim();
-	return cleaned.includes("/") ? cleaned : undefined;
+	const trimmed = remote.trim();
+	const azureSsh = trimmed.match(
+		/^git@ssh\.dev\.azure\.com:v3\/([^/]+)\/([^/]+)\/([^/]+)$/,
+	);
+	if (azureSsh)
+		return `${cleanRemotePart(azureSsh[1])}/${cleanRemotePart(azureSsh[3])}`;
+	const azureHttps = trimmed.match(
+		/^https:\/\/(?:[^/@]+@)?dev\.azure\.com\/([^/]+)\/([^/]+)\/_git\/([^/]+)$/,
+	);
+	if (azureHttps)
+		return `${cleanRemotePart(azureHttps[1])}/${cleanRemotePart(azureHttps[3])}`;
+	const githubSsh = trimmed.match(/^git@github\.com:([^/]+)\/([^/]+)$/);
+	if (githubSsh)
+		return `${cleanRemotePart(githubSsh[1])}/${cleanRemotePart(githubSsh[2])}`;
+	const githubHttps = trimmed.match(
+		/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/,
+	);
+	if (githubHttps)
+		return `${cleanRemotePart(githubHttps[1])}/${cleanRemotePart(githubHttps[2])}`;
+	return undefined;
 }
 
 function projectFromGitroot(path: string): string | undefined {
