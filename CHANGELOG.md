@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-17
+
+### Changed
+
+- Update the development compatibility baseline to Pi 0.80.10 across
+  `@earendil-works/pi-ai`, `@earendil-works/pi-coding-agent`, and
+  `@earendil-works/pi-tui`.
+
 ## [0.2.1] - 2026-06-22
 
 ### Fixed
@@ -46,7 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Privacy controls for newly logged rows, JSON export, SQLite backup, and diagnostics via `/usage doctor`.
 - TypeScript typecheck and Node test suite.
 
-[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/ttiimmaahh/pi-usage-bar/compare/v0.1.0...v0.1.1
