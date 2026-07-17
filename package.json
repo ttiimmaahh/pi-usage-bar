@@ -55,10 +55,10 @@
     "@earendil-works/pi-ai": "^0.80.10",
     "@earendil-works/pi-coding-agent": "^0.80.10",
     "@earendil-works/pi-tui": "^0.80.10",
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.1.1",
     "tsx": "^4.22.4",
     "typebox": "^1.2.8",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=24"
