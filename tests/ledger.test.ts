@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
 import { mkdtempSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -78,6 +80,39 @@ test("schema migrates to latest version", () => {
 	try {
 		assert.equal(db.schemaVersion(), 5);
 	} finally {
+		db.close();
+	}
+});
+
+test("insert waits for a concurrent writer to release the ledger", async () => {
+	const path = join(
+		mkdtempSync(join(tmpdir(), "pi-usage-bar-lock-")),
+		"usage.sqlite",
+	);
+	const db = new UsageLedger(path);
+	const blocker = spawn(
+		process.execPath,
+		[
+			"--input-type=module",
+			"--eval",
+			`import { DatabaseSync } from "node:sqlite";
+			const db = new DatabaseSync(process.argv[1]);
+			db.exec("BEGIN IMMEDIATE");
+			process.stdout.write("locked\\n");
+			Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
+			db.exec("COMMIT");
+			db.close();`,
+			path,
+		],
+		{ stdio: ["ignore", "pipe", "inherit"] },
+	);
+
+	try {
+		await once(blocker.stdout, "data");
+		assert.equal(db.insertEvent(event("locked-write", "project", 1)), true);
+		assert.equal(db.rowCount(), 1);
+	} finally {
+		if (blocker.exitCode === null) blocker.kill();
 		db.close();
 	}
 });

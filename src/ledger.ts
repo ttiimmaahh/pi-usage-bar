@@ -16,6 +16,7 @@ export const DEFAULT_LEDGER_PATH =
 	process.env.PI_USAGE_BAR_DB ?? join(getAgentDir(), "usage", "usage.sqlite");
 
 const CURRENT_SCHEMA_VERSION = 5;
+const LEDGER_BUSY_TIMEOUT_MS = 5_000;
 
 type Migration = { version: number; sql: string };
 
@@ -144,7 +145,7 @@ export class UsageLedger {
 
 	constructor(readonly path = DEFAULT_LEDGER_PATH) {
 		mkdirSync(dirname(path), { recursive: true });
-		this.db = new DatabaseSync(path);
+		this.db = new DatabaseSync(path, { timeout: LEDGER_BUSY_TIMEOUT_MS });
 		this.db.exec("PRAGMA journal_mode = WAL");
 		this.db.exec("PRAGMA synchronous = NORMAL");
 		this.migrate();
