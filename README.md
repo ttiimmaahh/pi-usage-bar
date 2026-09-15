@@ -28,12 +28,14 @@ Reload Pi if it is already running:
 
 ### Local development
 
+Node.js 24 or newer is required. The repository's `.nvmrc` pins the local development and CI baseline to Node 24.
+
 From this repo:
 
 ```bash
+nvm use
 npm install
 npm run check
-npm test
 ```
 
 Then add the package path to Pi settings, preferably after `npm:pi-bar` if both are installed and this footer should win:

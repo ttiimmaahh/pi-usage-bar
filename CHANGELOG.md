@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update the development compatibility baseline to Pi 0.85.1 across
+  `@earendil-works/pi-ai`, `@earendil-works/pi-coding-agent`, and
+  `@earendil-works/pi-tui`.
+- Pin local development and CI to Node.js 24 while continuing to declare
+  Node.js 24 or newer as the supported runtime.
+- Use Pi's current Google-compatible string enum helper and expose
+  `usage_query` in the default available-tools prompt.
+
 ## [0.2.3] - 2026-08-10
 
 ### Fixed

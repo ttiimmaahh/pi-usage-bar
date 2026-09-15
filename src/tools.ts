@@ -1,3 +1,4 @@
+import { StringEnum } from "@earendil-works/pi-ai";
 import { Type, type Static } from "typebox";
 import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 import { formatMoney, formatTokens } from "./format.ts";
@@ -8,12 +9,7 @@ import type { UsageSummaryRow } from "./types.ts";
 
 const querySchema = Type.Object({
 	groupBy: Type.Optional(
-		Type.Union([
-			Type.Literal("summary"),
-			Type.Literal("project"),
-			Type.Literal("model"),
-			Type.Literal("session"),
-		]),
+		StringEnum(["summary", "project", "model", "session"] as const),
 	),
 	range: Type.Optional(Type.String()),
 	projectKey: Type.Optional(Type.String()),
@@ -30,6 +26,8 @@ export function createUsageQueryTool(
 		label: "Usage Query",
 		description:
 			"Query local Pi token/cost usage rollups by summary, project, model, or session.",
+		promptSnippet:
+			"Query local token and cost usage by project, model, session, or summary",
 		parameters: querySchema,
 		async execute(_toolCallId, params: QueryParams) {
 			const groupBy = params.groupBy ?? "project";
